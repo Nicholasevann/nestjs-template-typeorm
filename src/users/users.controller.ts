@@ -16,6 +16,7 @@ import { Auth } from 'src/auth/decorator/auth.decorator';
 import { AuthType } from 'src/auth/enums/auth-type.enum';
 
 @Controller('users')
+@Auth(AuthType.Bearer)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -25,7 +26,6 @@ export class UsersController {
   }
 
   @Get()
-  @Auth(AuthType.Bearer)
   findAll(@Query() paginationDto: PaginationDto) {
     return this.usersService.findAll(paginationDto);
   }

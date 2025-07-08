@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { SignInDto } from './dtos/signin.dto';
 import { RefreshToken } from './dtos/refresh-token.dto';
+import jwtConfig from './config/jwt.config';
 
 @Injectable()
 export class AuthService {
@@ -29,14 +30,14 @@ export class AuthService {
 
     const payload = { id: user.id, email: user.email };
     const accessToken = await this.jwtService.signAsync(payload, {
-      expiresIn: process.env.JWT_ACCESS_TOKEN_TTL || '3600',
-      audience: process.env.JWT_TOKEN_AUDIENCE,
-      issuer: process.env.JWT_TOKEN_ISSUER,
+      expiresIn: jwtConfig().accessTokenTtl || '3600',
+      audience: jwtConfig().audience,
+      issuer: jwtConfig().issuer,
     });
     const refreshToken = await this.jwtService.signAsync(payload, {
-      expiresIn: process.env.JWT_REFRESH_TOKEN_TTL || '86400',
-      audience: process.env.JWT_TOKEN_AUDIENCE,
-      issuer: process.env.JWT_TOKEN_ISSUER,
+      expiresIn: jwtConfig().refreshTokenTtl || '86400',
+      audience: jwtConfig().audience,
+      issuer: jwtConfig().issuer,
     });
 
     return {
@@ -59,8 +60,8 @@ export class AuthService {
       const payload = await this.jwtService.verifyAsync(
         refreshTokenDto.refreshToken,
         {
-          audience: process.env.JWT_TOKEN_AUDIENCE,
-          issuer: process.env.JWT_TOKEN_ISSUER,
+          audience: jwtConfig().audience,
+          issuer: jwtConfig().issuer,
         },
       );
 
@@ -71,14 +72,14 @@ export class AuthService {
 
       const newPayload = { sub: user.id, email: user.email };
       const accessToken = await this.jwtService.signAsync(newPayload, {
-        expiresIn: process.env.JWT_ACCESS_TOKEN_TTL || '3600',
-        audience: process.env.JWT_TOKEN_AUDIENCE,
-        issuer: process.env.JWT_TOKEN_ISSUER,
+        expiresIn: jwtConfig().accessTokenTtl || '3600',
+        audience: jwtConfig().audience,
+        issuer: jwtConfig().issuer,
       });
       const newRefreshToken = await this.jwtService.signAsync(newPayload, {
-        expiresIn: process.env.JWT_REFRESH_TOKEN_TTL || '86400',
-        audience: process.env.JWT_TOKEN_AUDIENCE,
-        issuer: process.env.JWT_TOKEN_ISSUER,
+        expiresIn: jwtConfig().refreshTokenTtl || '86400',
+        audience: jwtConfig().audience,
+        issuer: jwtConfig().issuer,
       });
 
       return {
